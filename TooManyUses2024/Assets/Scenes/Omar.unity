@@ -683,7 +683,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1546401926}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2fba25a5cd15594e8f050a11e386c80, type: 3}
   m_Name: 
@@ -881,7 +881,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!60 &1919261958
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -926,12 +926,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 36.9886, y: 21.83298}
+    - - {x: 57.00178, y: 21.273954}
       - {x: 2.3479748, y: 21.505627}
       - {x: -26.946438, y: 21.703447}
       - {x: -26.813215, y: -5.064898}
       - {x: 0.118192315, y: -5.3484306}
-      - {x: 37.65306, y: -5.083802}
+      - {x: 1.1209558, y: -11.814793}
+      - {x: 58.113464, y: -12.015745}
   m_UseDelaunayMesh: 0
 --- !u!4 &1919261959
 Transform:
