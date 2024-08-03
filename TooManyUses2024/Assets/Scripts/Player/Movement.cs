@@ -13,7 +13,6 @@ public class Movement : MonoBehaviour
 
     [Header("Jump Settings")]
     [SerializeField] private float forceJump;
-    [SerializeField] private int jumpsMax;
     [SerializeField] private LayerMask MaskFlood;
     private int jumpsRestants;
 
@@ -36,7 +35,7 @@ public class Movement : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         runsRemaining = runMax;
-        jumpsRestants = jumpsMax;
+
     }
 
     private void Update()
@@ -78,14 +77,11 @@ public class Movement : MonoBehaviour
 
     private void HandleJump()
     {
-        if (IsOnGround())
-        {
-            jumpsRestants = jumpsMax;
-        }
 
-        if (Input.GetKeyDown(KeyCode.Space) && jumpsRestants > 0)
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            jumpsRestants--;
+
             rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0f);
             rigidbody.AddForce(Vector2.up * forceJump, ForceMode2D.Impulse);
         }
