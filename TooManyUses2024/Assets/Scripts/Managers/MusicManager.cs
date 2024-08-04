@@ -20,11 +20,15 @@ public class MusicManager : MonoBehaviour
 
     public void playMainMusic()
     {
-        AudioManager.instance.musicSource.Stop();
-        AudioManager.instance.PlayMusic("MainMusic");
+        if (!AudioManager.instance.musicSource.isPlaying)
+        {
+            AudioManager.instance.musicSource.Stop();
+            AudioManager.instance.PlayMusic("MainMusic");
+        }
     }
     public void playMenuMusic()
     {
+        
         AudioManager.instance.musicSource.Stop();
         AudioManager.instance.PlayMusic("MenuMusic");
     }

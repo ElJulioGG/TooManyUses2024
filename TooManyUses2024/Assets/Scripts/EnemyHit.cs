@@ -28,6 +28,7 @@ public class EnemyHit : MonoBehaviour
                 // Apply the force to the Rigidbody2D in the random direction
                 rb.AddForce(randomDirection * forceAmount, ForceMode2D.Impulse);
             }
+            AudioManager.instance.PlaySfx("GetHit");
         }
     }
 }
