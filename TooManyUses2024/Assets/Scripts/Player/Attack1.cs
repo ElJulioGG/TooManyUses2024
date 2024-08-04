@@ -76,9 +76,10 @@ public class Attack1 : MonoBehaviour
                     canFire = false;
                     playerRb2D.velocity = Vector2.zero;
                     playerRb2D.gravityScale = 1.1f;
-                    Instantiate(bullet, bulletTransform.position, Quaternion.identity);
+                    Instantiate(bullet, spriteHand.transform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.left * recoil, ForceMode2D.Force);
                     waitForAtack1 = false;
+                    AudioManager.instance.PlaySfx("Electric");
 
                 }
                 else if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -91,6 +92,7 @@ public class Attack1 : MonoBehaviour
                     Instantiate(bullet, bulletTransform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.right * recoil, ForceMode2D.Force);
                     waitForAtack1 = false;
+                    AudioManager.instance.PlaySfx("Electric");
                 }
                 else if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
@@ -103,6 +105,7 @@ public class Attack1 : MonoBehaviour
                     Instantiate(bullet, bulletTransform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.up * recoil, ForceMode2D.Force);
                     waitForAtack1 = false;
+                    AudioManager.instance.PlaySfx("Electric");
                 }
                 else if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
@@ -116,6 +119,7 @@ public class Attack1 : MonoBehaviour
                     Instantiate(bullet, bulletTransform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.down * recoil, ForceMode2D.Force);
                     waitForAtack1 = false;
+                     AudioManager.instance.PlaySfx("Electric");
                 }
                
 

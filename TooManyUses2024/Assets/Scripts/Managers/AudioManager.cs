@@ -55,6 +55,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayFootSteps(string name)
     {
+       
         Sounds s = Array.Find(FootStepsSounds, x => x.name == name);
         if (s == null)
         {
@@ -62,7 +63,8 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            FootStepsSource.PlayOneShot(s.clip);
+            FootStepsSource.clip = s.clip;
+            FootStepsSource.Play();
         }
     }
 

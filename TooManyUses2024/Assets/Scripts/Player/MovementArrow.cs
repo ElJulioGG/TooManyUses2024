@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Movement2 : MonoBehaviour
@@ -15,7 +16,7 @@ public class Movement2 : MonoBehaviour
     private float t = 0f;
 
 
-
+    [SerializeField] private SpriteRenderer arrowSprite;
     [Header("PlayerAtributes")]
     [SerializeField] private Rigidbody2D playerRb;
     [SerializeField] private float initialForceMagnitude;
@@ -28,6 +29,8 @@ public class Movement2 : MonoBehaviour
     [SerializeField] private float jumpBufferTime = 0.2f;
     [SerializeField] private float jumpBufferCounter;
     [SerializeField] private Attack1 attack1;
+    [SerializeField] public bool isDead;
+    [SerializeField] public bool deadSequence = true;
     public float maxHeight { get; private set; } = 0f;
 
 
@@ -41,6 +44,7 @@ public class Movement2 : MonoBehaviour
     [SerializeField] private float cameraBoundsOffsetY;
     [SerializeField] private GameObject deathHitbox;
     [SerializeField] private float deathHitboxOffsetY;
+    [SerializeField] private GameObject deathCanvas;
 
     [Header("Materials")]
     [SerializeField] private PhysicsMaterial2D bouncyMaterial;
@@ -49,6 +53,8 @@ public class Movement2 : MonoBehaviour
     ///Booleans
     private bool isHolding;
     public bool onGround = true;
+    public bool landed = false;
+    public bool playHold = false;
 
     private float lastJumpPressTime;
 
@@ -59,101 +65,124 @@ public class Movement2 : MonoBehaviour
         baseForceMagnitude = initialForceMagnitude;
         isHolding = false;
         lastJumpPressTime = -jumpBufferTime;
+        
     }
 
     void Update()
     {
-        float currentHeight = transform.position.y;
-
-        // Update maxHeight if currentHeight is higher
-        if (currentHeight > maxHeight)
+        if (isDead)
         {
-            maxHeight = currentHeight;
-            cameraBounds.transform.position = new Vector3(cameraBounds.transform.position.x, currentHeight - cameraBoundsOffsetY, cameraBounds.transform.position.z);
-            deathHitbox.transform.position = new Vector3(deathHitbox.transform.position.x, currentHeight - deathHitboxOffsetY, deathHitbox.transform.position.z);
-        }
-
-        
-        handAnimator.SetFloat("Velocity", playerRb.velocity.y);
-        if (GameManager.instance.playerCanMove)
+            if (deadSequence)
+            {
+                deathCanvas.SetActive(true);
+                deadSequence= false;
+                CameraShake.Instance.shakeCamera(5f, .1f);
+                // AudioManager.instance.musicSource.Stop();
+                AudioManager.instance.PlaySfx("DeathJingle");
+            }
+        }else
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                jumpBufferCounter = jumpBufferTime;  // Record the time when the spacebar is pressed
-            }
-            else
-            {
-                jumpBufferCounter -= Time.deltaTime;
-            }
-            if (onGround && (playerRb.velocity.y == 0))
-            {
-                attack1.ammo = 0;
-                handAnimator.SetBool("onGround", true);
-                playerRb.gravityScale = originalGravityScaleChange;
-                if ((jumpBufferCounter > 0) && (timer >= jumpDelay))
-                {
-                    jumpBufferCounter = 0;
-                    isHolding = true;
+            float currentHeight = transform.position.y;
 
-                }
-                if (Time.time - lastJumpPressTime <= jumpBufferTime && !isHolding)
+            // Update maxHeight if currentHeight is higher
+            if (currentHeight > maxHeight)
+            {
+                maxHeight = currentHeight;
+                cameraBounds.transform.position = new Vector3(cameraBounds.transform.position.x, currentHeight - cameraBoundsOffsetY, cameraBounds.transform.position.z);
+                deathHitbox.transform.position = new Vector3(deathHitbox.transform.position.x, currentHeight - deathHitboxOffsetY, deathHitbox.transform.position.z);
+            }
+
+
+            handAnimator.SetFloat("Velocity", playerRb.velocity.y);
+            if (GameManager.instance.playerCanMove)
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    lastJumpPressTime = -jumpBufferTime;  // Reset buffer time
-                }
-                if (Input.GetKeyUp(KeyCode.Space) && isHolding)
-                {
-                    isHolding = false;
-                    handAnimator.SetBool("isHolding", false);
-                    applyForce();
-                }
-                if (isHolding)
-                {
-                    handAnimator.SetBool("isHolding", true);
-                    addForce();
-                    changeDirection();
-                    speed = holdSpeed;
+                    jumpBufferCounter = jumpBufferTime;  // Record the time when the spacebar is pressed
                 }
                 else
                 {
-                    changeDirection();
+                    //wda
+                    jumpBufferCounter -= Time.deltaTime;
                 }
-                timer += Time.deltaTime;
+                if (onGround)
+                {
+                    attack1.ammo = 0;
+                    handAnimator.SetBool("onGround", true);
+                    playerRb.gravityScale = originalGravityScaleChange;
+                    if ((jumpBufferCounter > 0) && (timer >= jumpDelay))
+                    {
+                        jumpBufferCounter = 0;
+                        isHolding = true;
+
+                    }
+                    if (Time.time - lastJumpPressTime <= jumpBufferTime && !isHolding)
+                    {
+                        lastJumpPressTime = -jumpBufferTime;  // Reset buffer time
+                    }
+                    if (Input.GetKeyUp(KeyCode.Space) && isHolding)
+                    {
+                        playHold = false;
+                        AudioManager.instance.FootStepsSource.Stop();
+                        isHolding = false;
+                        handAnimator.SetBool("isHolding", false);
+                        applyForce();
+                    }
+                    if (isHolding)
+                    {
+                        handAnimator.SetBool("isHolding", true);
+                        addForce();
+                        changeDirection();
+                        speed = holdSpeed;
+                        float normalizedForce = baseForceMagnitude / maxChangeForceMagnitude;
+                        arrowSprite.transform.localScale = new Vector3(1 + normalizedForce, 1 + normalizedForce, arrowSprite.transform.localScale.z);
+                        arrowSprite.color = Color.Lerp(Color.green, Color.red, normalizedForce);
+                    }
+                    else
+                    {
+                        changeDirection();
+                    }
+                    timer += Time.deltaTime;
+                }
+                else
+                {
+                    timer = 0f;
+                    handAnimator.SetBool("onGround", false);
+
+                    playerRb.gravityScale = playerRb.gravityScale * gravityScaleChange;
+                    if (Input.GetKeyUp(KeyCode.Space))
+                    {
+                        lastJumpPressTime = -jumpBufferTime;
+                    }
+                }
             }
-            else
+            if (GameManager.instance.playerHasBeenHit)
             {
-                timer = 0f;
+                isHolding = false;
+                handAnimator.SetBool("isHolding", false);
+                onGround = false;
                 handAnimator.SetBool("onGround", false);
 
-                playerRb.gravityScale = playerRb.gravityScale * gravityScaleChange;
-                if (Input.GetKeyUp(KeyCode.Space))
-                {
-                    lastJumpPressTime = -jumpBufferTime;
-                }
+                speed = maxSpeed;
+                gravityScaleChange = originalGravityScaleChange;
+                baseForceMagnitude = initialForceMagnitude;
+                lastJumpPressTime = -jumpBufferTime;
+                StartCoroutine(hitCorrutine());
             }
         }
-        if (GameManager.instance.playerHasBeenHit)
-        {
-            isHolding = false;
-            handAnimator.SetBool("isHolding", false);
-            onGround = false;
-            handAnimator.SetBool("onGround", false);
-
-            speed = maxSpeed;
-            gravityScaleChange = originalGravityScaleChange;
-            baseForceMagnitude = initialForceMagnitude;
-                      lastJumpPressTime = -jumpBufferTime;
-            StartCoroutine(hitCorrutine());
-        }
-       
 
     }
 
     private IEnumerator hitCorrutine()
     {
+        CameraShake.Instance.shakeCamera(5f, .1f);
+        handAnimator.SetBool("Invincible", true);
+        AudioManager.instance.PlaySfx("GetHit");
         GameManager.instance.playerHasBeenHit = false;
         GameManager.instance.playerCanMove = false;
         GameManager.instance.playerIsInvincible = true;
         Collider2D collider = playerRb.GetComponent<Collider2D>();
+
         if (collider != null)
         {
             collider.sharedMaterial = bouncyMaterial;
@@ -161,6 +190,7 @@ public class Movement2 : MonoBehaviour
         playerRb.gravityScale = originalGravityScaleChange;
         yield return new WaitForSeconds(2f);
 
+        handAnimator.SetBool("Invincible", false);
         GameManager.instance.playerIsInvincible = false;
         GameManager.instance.playerCanMove = true;
         if (collider != null)
@@ -176,7 +206,7 @@ public class Movement2 : MonoBehaviour
 
       
     }
-
+    
     private void applyForce()
     {
        if(Input.GetKeyUp(KeyCode.Space)){
@@ -186,7 +216,12 @@ public class Movement2 : MonoBehaviour
             baseForceMagnitude = initialForceMagnitude;
             speed = maxSpeed;
             attack1.waitForAtack1 = true;
-            
+            AudioManager.instance.PlayFootSteps("AirTime");
+
+            // Reset arrow sprite to normal scale and color
+            arrowSprite.transform.localScale = new Vector3(1f, 1f, arrowSprite.transform.localScale.z);
+            arrowSprite.color = Color.green;
+
         }
       
            
@@ -195,6 +230,12 @@ public class Movement2 : MonoBehaviour
     {
         if (baseForceMagnitude <= maxChangeForceMagnitude)
         {
+            if (!playHold)
+            {
+                AudioManager.instance.PlayFootSteps("HoldJump");
+                playHold = true;
+            }
+            
             baseForceMagnitude += Time.deltaTime * changeForceMagnitude;
         }
     }
