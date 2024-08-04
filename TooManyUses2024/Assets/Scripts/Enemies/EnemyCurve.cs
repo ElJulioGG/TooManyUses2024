@@ -26,11 +26,8 @@ public class EnemyCurve : MonoBehaviour
             gizmosPosition = Mathf.Pow(1 - t, 7) * adjustedPos[0] +
                              7 * Mathf.Pow(1 - t, 6) * t * adjustedPos[1] +
                              21 * Mathf.Pow(1 - t, 5) * Mathf.Pow(t, 2) * adjustedPos[2] +
-                             35 * Mathf.Pow(1 - t, 4) * Mathf.Pow(t, 3) * adjustedPos[3] +
-                             35 * Mathf.Pow(1 - t, 3) * Mathf.Pow(t, 4) * adjustedPos[4] +
-                             21 * Mathf.Pow(1 - t, 2) * Mathf.Pow(t, 5) * adjustedPos[5] +
-                             7 * (1 - t) * Mathf.Pow(t, 6) * adjustedPos[6] +
-                             Mathf.Pow(t, 7) * adjustedPos[7];
+                             35 * Mathf.Pow(1 - t, 4) * Mathf.Pow(t, 3) * adjustedPos[3] 
+                             ;
 
             Gizmos.DrawSphere(gizmosPosition, 0.25f);
         }
