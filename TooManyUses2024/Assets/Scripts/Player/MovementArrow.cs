@@ -6,12 +6,15 @@ public class Movement2 : MonoBehaviour
 {
     [Header("ArrowAtributes")]
     [SerializeField] float currentAngle;
+    
     public float angle1 = -45f;
     public float angle2 = 45f;
     public float maxSpeed = 2f;
     public float speed = 2f;
     public float holdSpeed = 0.2f;
     private float t = 0f;
+
+
 
     [Header("PlayerAtributes")]
     [SerializeField] private Rigidbody2D playerRb;
@@ -25,11 +28,23 @@ public class Movement2 : MonoBehaviour
     [SerializeField] private float jumpBufferTime = 0.2f;
     [SerializeField] private float jumpBufferCounter;
     [SerializeField] private Attack1 attack1;
+    public float maxHeight { get; private set; } = 0f;
+
+
+
 
     [SerializeField] private float timer;
     public Animator handAnimator;
 
+    [Header("External")]
+    [SerializeField] private GameObject cameraBounds;
+    [SerializeField] private float cameraBoundsOffsetY;
+    [SerializeField] private GameObject deathHitbox;
+    [SerializeField] private float deathHitboxOffsetY;
 
+    [Header("Materials")]
+    [SerializeField] private PhysicsMaterial2D bouncyMaterial;
+    [SerializeField] private PhysicsMaterial2D normalMaterial;
 
     ///Booleans
     private bool isHolding;
@@ -48,62 +63,110 @@ public class Movement2 : MonoBehaviour
 
     void Update()
     {
-        handAnimator.SetFloat("Velocity", playerRb.velocity.y);
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            jumpBufferCounter = jumpBufferTime;  // Record the time when the spacebar is pressed
-        }
-        else
-        {
-            jumpBufferCounter -=Time.deltaTime;
-        }
-        if (onGround&& (playerRb.velocity.y == 0))
-        {
-            attack1.ammo = 0;
-            handAnimator.SetBool("onGround", true);
-            playerRb.gravityScale = originalGravityScaleChange;
-            if ((jumpBufferCounter>0 ) && (timer >= jumpDelay))
-            {
-                jumpBufferCounter = 0;
-                isHolding = true;
+        float currentHeight = transform.position.y;
 
-            }
-            if (Time.time - lastJumpPressTime <= jumpBufferTime && !isHolding)
+        // Update maxHeight if currentHeight is higher
+        if (currentHeight > maxHeight)
+        {
+            maxHeight = currentHeight;
+            cameraBounds.transform.position = new Vector3(cameraBounds.transform.position.x, currentHeight - cameraBoundsOffsetY, cameraBounds.transform.position.z);
+            deathHitbox.transform.position = new Vector3(deathHitbox.transform.position.x, currentHeight - deathHitboxOffsetY, deathHitbox.transform.position.z);
+        }
+
+        
+        handAnimator.SetFloat("Velocity", playerRb.velocity.y);
+        if (GameManager.instance.playerCanMove)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                lastJumpPressTime = -jumpBufferTime;  // Reset buffer time
-            }
-            if (Input.GetKeyUp(KeyCode.Space)&& isHolding)
-            {
-                isHolding = false;
-                handAnimator.SetBool("isHolding", false);
-                applyForce();
-            }
-            if (isHolding)
-            {
-                handAnimator.SetBool("isHolding", true);
-                addForce();
-                changeDirection();
-                speed = holdSpeed;
+                jumpBufferCounter = jumpBufferTime;  // Record the time when the spacebar is pressed
             }
             else
             {
-                changeDirection();
+                jumpBufferCounter -= Time.deltaTime;
             }
-            timer += Time.deltaTime;
-        }
-        else
-        {
-            timer = 0f;
-             handAnimator.SetBool("onGround", false); 
-            
-            playerRb.gravityScale = playerRb.gravityScale * gravityScaleChange;
-            if (Input.GetKeyUp(KeyCode.Space))
+            if (onGround && (playerRb.velocity.y == 0))
             {
-                lastJumpPressTime = -jumpBufferTime;
+                attack1.ammo = 0;
+                handAnimator.SetBool("onGround", true);
+                playerRb.gravityScale = originalGravityScaleChange;
+                if ((jumpBufferCounter > 0) && (timer >= jumpDelay))
+                {
+                    jumpBufferCounter = 0;
+                    isHolding = true;
+
+                }
+                if (Time.time - lastJumpPressTime <= jumpBufferTime && !isHolding)
+                {
+                    lastJumpPressTime = -jumpBufferTime;  // Reset buffer time
+                }
+                if (Input.GetKeyUp(KeyCode.Space) && isHolding)
+                {
+                    isHolding = false;
+                    handAnimator.SetBool("isHolding", false);
+                    applyForce();
+                }
+                if (isHolding)
+                {
+                    handAnimator.SetBool("isHolding", true);
+                    addForce();
+                    changeDirection();
+                    speed = holdSpeed;
+                }
+                else
+                {
+                    changeDirection();
+                }
+                timer += Time.deltaTime;
             }
+            else
+            {
+                timer = 0f;
+                handAnimator.SetBool("onGround", false);
+
+                playerRb.gravityScale = playerRb.gravityScale * gravityScaleChange;
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    lastJumpPressTime = -jumpBufferTime;
+                }
+            }
+        }
+        if (GameManager.instance.playerHasBeenHit)
+        {
+            isHolding = false;
+            handAnimator.SetBool("isHolding", false);
+            onGround = false;
+            handAnimator.SetBool("onGround", false);
+
+            speed = maxSpeed;
+            gravityScaleChange = originalGravityScaleChange;
+            baseForceMagnitude = initialForceMagnitude;
+                      lastJumpPressTime = -jumpBufferTime;
+            StartCoroutine(hitCorrutine());
         }
        
 
+    }
+
+    private IEnumerator hitCorrutine()
+    {
+        GameManager.instance.playerHasBeenHit = false;
+        GameManager.instance.playerCanMove = false;
+        GameManager.instance.playerIsInvincible = true;
+        Collider2D collider = playerRb.GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.sharedMaterial = bouncyMaterial;
+        }
+        playerRb.gravityScale = originalGravityScaleChange;
+        yield return new WaitForSeconds(2f);
+
+        GameManager.instance.playerIsInvincible = false;
+        GameManager.instance.playerCanMove = true;
+        if (collider != null)
+        {
+            collider.sharedMaterial = normalMaterial;
+        }
     }
     private void changeDirection()
     {

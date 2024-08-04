@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     //public variables
     public bool playerCanMove = true;
     public bool playerCanAtack = true;
+    public bool playerIsInvincible = false;
+    public bool playerHasBeenHit = false;
 
     private void Awake()
     {
