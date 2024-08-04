@@ -8,6 +8,8 @@ public class EnemyFliying : MonoBehaviour
     public GameObject dropPrefab; // Prefab del huevo a disparar
     public float tiempoEntreDisparos; // Tiempo entre disparos
     private float tiempoSiguienteDisparo;
+    public float velocidadDisparo; // Velocidad del disparo
+
 
     void Start()
     {
@@ -30,9 +32,11 @@ public class EnemyFliying : MonoBehaviour
     {
         if (Time.time >= tiempoSiguienteDisparo)
         {
-            // Instanciar un huevo y dispararlo hacia abajo
-            Instantiate(dropPrefab, transform.position, Quaternion.identity);
+            GameObject rocket = Instantiate(dropPrefab, transform.position, Quaternion.identity);
             tiempoSiguienteDisparo = Time.time + tiempoEntreDisparos;
+            Rigidbody2D rb = rocket.GetComponent<Rigidbody2D>();
+            rb.velocity = new Vector2(0, -velocidadDisparo);
+
         }
     }
 }
