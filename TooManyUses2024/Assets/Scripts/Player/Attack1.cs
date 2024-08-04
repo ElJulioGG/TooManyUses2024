@@ -17,10 +17,10 @@ public class Attack1 : MonoBehaviour
     public float recoil;
     public float timer;
     public float timerBetweenFiring;
-    [SerializeField] public int ammo = 999;
+    [SerializeField] public int ammo = 0;
     [SerializeField] public float returnRotationDelay;
     private Vector3 newPosition;
-    private bool waitForAtack1 = true;
+    public bool waitForAtack1 =false;
 
     [SerializeField] private float offsetX = 0;
     [SerializeField] private float offsetY = 0;
@@ -31,7 +31,7 @@ public class Attack1 : MonoBehaviour
 
     void Start()
     {
-        waitForAtack1 = true;
+        waitForAtack1 = false;
         mainCam = Camera.main;
     }
 
@@ -65,21 +65,23 @@ public class Attack1 : MonoBehaviour
 
 
             //}
-            if (canFire && ammo > 0 && GameManager.instance.playerCanAtack && waitForAtack1)
+            if (canFire && GameManager.instance.playerCanAtack && waitForAtack1)
             {
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
                     playerAnimator.SetTrigger("Shoot");
-                    
-                    transform.Rotate(0, 0, 180);
+
+                    spriteHand.transform.Rotate(0, 0, 180);
                     Invoke("returnRotation", returnRotationDelay);
                     canFire = false;
                     playerRb2D.velocity = Vector2.zero;
                     playerRb2D.gravityScale = 1.1f;
                     Instantiate(bullet, bulletTransform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.left * recoil, ForceMode2D.Force);
-                    
-                }else if (Input.GetKeyDown(KeyCode.RightArrow))
+                    waitForAtack1 = false;
+
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
                     
                     playerAnimator.SetTrigger("Shoot");
@@ -88,17 +90,19 @@ public class Attack1 : MonoBehaviour
                     playerRb2D.gravityScale = 1.1f;
                     Instantiate(bullet, bulletTransform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.right * recoil, ForceMode2D.Force);
+                    waitForAtack1 = false;
                 }
                 else if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
                     playerAnimator.SetTrigger("Shoot");
-                    transform.Rotate(0, 0, 90);
+                    spriteHand.transform.Rotate(0, 0, 90);
                     Invoke("returnRotation", returnRotationDelay);
                     canFire = false;
                     playerRb2D.velocity = Vector2.zero;
                     playerRb2D.gravityScale = 1.1f;
                     Instantiate(bullet, bulletTransform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.up * recoil, ForceMode2D.Force);
+                    waitForAtack1 = false;
                 }
                 else if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
@@ -111,21 +115,22 @@ public class Attack1 : MonoBehaviour
                     playerRb2D.gravityScale = 1.1f;
                     Instantiate(bullet, bulletTransform.position, Quaternion.identity);
                     playerRb2D.AddForce(Vector2.down * recoil, ForceMode2D.Force);
+                    waitForAtack1 = false;
                 }
-
+               
 
             }
             newPosition = new Vector3(Player.transform.position.x + offsetX, Player.transform.position.y + offsetY, Player.transform.position.z + offsetZ);
             gameObject.transform.position = newPosition;
             if (ammo <= 0)
             {
-                gameObject.SetActive(false);
+               // gameObject.SetActive(false);
             }
         }
     }
     private void OnEnable()
     {
-        ammo = 999;
+       // ammo = 999;
 
         //Instantiate(spawnParticles, Player.transform.position, Quaternion.identity);
         //AudioManager.instance.PlaySfx("TransformEnd");

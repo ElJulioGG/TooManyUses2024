@@ -8,7 +8,9 @@ public class Movement2 : MonoBehaviour
     [SerializeField] float currentAngle;
     public float angle1 = -45f;
     public float angle2 = 45f;
+    public float maxSpeed = 2f;
     public float speed = 2f;
+    public float holdSpeed = 0.2f;
     private float t = 0f;
 
     [Header("PlayerAtributes")]
@@ -19,7 +21,12 @@ public class Movement2 : MonoBehaviour
     [SerializeField] private float maxChangeForceMagnitude;
     [SerializeField] private float originalGravityScaleChange = 1.1f;
     [SerializeField] private float gravityScaleChange = 1.1f;
+    [SerializeField] private float jumpDelay = 0.1f;
+    [SerializeField] private float jumpBufferTime = 0.2f;
+    [SerializeField] private float jumpBufferCounter;
+    [SerializeField] private Attack1 attack1;
 
+    [SerializeField] private float timer;
     public Animator handAnimator;
 
 
@@ -28,27 +35,44 @@ public class Movement2 : MonoBehaviour
     private bool isHolding;
     public bool onGround = true;
 
+    private float lastJumpPressTime;
+
     void Start()
     {
+        speed = maxSpeed;
         gravityScaleChange = originalGravityScaleChange;
         baseForceMagnitude = initialForceMagnitude;
         isHolding = false;
+        lastJumpPressTime = -jumpBufferTime;
     }
 
     void Update()
     {
         handAnimator.SetFloat("Velocity", playerRb.velocity.y);
-        if (onGround)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
+            jumpBufferCounter = jumpBufferTime;  // Record the time when the spacebar is pressed
+        }
+        else
+        {
+            jumpBufferCounter -=Time.deltaTime;
+        }
+        if (onGround&& (playerRb.velocity.y == 0))
+        {
+            attack1.ammo = 0;
             handAnimator.SetBool("onGround", true);
             playerRb.gravityScale = originalGravityScaleChange;
-            if (Input.GetKeyDown(KeyCode.Space))
+            if ((jumpBufferCounter>0 ) && (timer >= jumpDelay))
             {
+                jumpBufferCounter = 0;
                 isHolding = true;
-                handAnimator.SetBool("isHolding", true);
 
             }
-            if (Input.GetKeyUp(KeyCode.Space))
+            if (Time.time - lastJumpPressTime <= jumpBufferTime && !isHolding)
+            {
+                lastJumpPressTime = -jumpBufferTime;  // Reset buffer time
+            }
+            if (Input.GetKeyUp(KeyCode.Space)&& isHolding)
             {
                 isHolding = false;
                 handAnimator.SetBool("isHolding", false);
@@ -56,18 +80,27 @@ public class Movement2 : MonoBehaviour
             }
             if (isHolding)
             {
+                handAnimator.SetBool("isHolding", true);
                 addForce();
+                changeDirection();
+                speed = holdSpeed;
             }
             else
             {
                 changeDirection();
             }
+            timer += Time.deltaTime;
         }
         else
         {
+            timer = 0f;
              handAnimator.SetBool("onGround", false); 
             
             playerRb.gravityScale = playerRb.gravityScale * gravityScaleChange;
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                lastJumpPressTime = -jumpBufferTime;
+            }
         }
        
 
@@ -88,7 +121,10 @@ public class Movement2 : MonoBehaviour
             Vector2 direction = new Vector2(Mathf.Cos(angleInRadians), Mathf.Sin(angleInRadians));
             playerRb.AddForce(direction * baseForceMagnitude);
             baseForceMagnitude = initialForceMagnitude;
-       }
+            speed = maxSpeed;
+            attack1.waitForAtack1 = true;
+            
+        }
       
            
     }
@@ -98,6 +134,10 @@ public class Movement2 : MonoBehaviour
         {
             baseForceMagnitude += Time.deltaTime * changeForceMagnitude;
         }
+    }
+    private void giveAmmo()
+    {
+        attack1.ammo = 1;
     }
 
 }
