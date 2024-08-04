@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Bloques-paredes_89
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 1577558240, guid: 1459be87340d4624d8b8d105e4d4b5f2, type: 3}
+  m_Sprite: {fileID: 1230140242, guid: 99158dbdd35a21348bd93b8bdf708ed6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
