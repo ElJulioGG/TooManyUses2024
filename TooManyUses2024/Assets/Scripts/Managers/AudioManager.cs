@@ -7,9 +7,9 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
-    public Sounds[] musicSounds, sfxSounds, FootStepsSounds, Sfx2Sounds, UISounds, Sfx3Sounds, sfxLoop1Sounds, Sfx4Sounds;
+    public Sounds[] musicSounds, sfxSounds, FootStepsSounds, Sfx2Sounds, UISounds,Sfx3Sounds, sfxLoop1Sounds, Sfx4Sounds;
     public AudioSource musicSource, sfxSource, FootStepsSource, DoorSource, UISource, sfxSource3, sfxLoopSource1, SfxSource4;
-    
+
     private void Awake()
     {
         if (instance == null)
@@ -129,4 +129,4 @@ public class AudioManager : MonoBehaviour
         }
     }
 }
-//s
+
