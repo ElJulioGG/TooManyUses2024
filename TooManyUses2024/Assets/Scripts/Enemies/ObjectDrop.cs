@@ -21,6 +21,6 @@ public class ObjectDrop : MonoBehaviour
         }
 
         // Destruir el huevo al colisionar con cualquier objeto
-        Destroy(gameObject,3f);
+        Destroy(gameObject,2f);
     }
 }

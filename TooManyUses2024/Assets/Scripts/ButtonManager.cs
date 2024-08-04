@@ -12,7 +12,7 @@ public class ButtonManager : MonoBehaviour
     }
     public void goGameplay()
     {
-        SceneManager.LoadScene("FinalScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
         print("goGameplay");
     }
     public void reloadScene()

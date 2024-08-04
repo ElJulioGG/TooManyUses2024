@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class deathCollider : MonoBehaviour
 {
+
     public Movement2 movement2;
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -11,6 +12,8 @@ public class deathCollider : MonoBehaviour
         {
             movement2.isDead = true;
             AudioManager.instance.PlaySfx("FallDeath");
+           
         }
+
     }
 }

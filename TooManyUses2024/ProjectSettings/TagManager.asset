@@ -9,6 +9,15 @@ TagManager:
   - Enemy
   - Wall
   - Target
+  - TeleportTower
+  - Npc
+  - BaseTeleport2
+  - Atack1
+  - TutorialRespawn2
+  - TutorialRespawn
+  - Atack3
+  - BaseTeleport1
+  - Bullet
   layers:
   - Default
   - TransparentFX

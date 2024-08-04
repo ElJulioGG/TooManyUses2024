@@ -16,6 +16,10 @@ public class EnemyRocketShooter : MonoBehaviour
     private Vector3 targetPosition;
     private float nextShootTime = 0f;
 
+    private void Start()
+    {
+        
+    }
     void Update()
     {
         // Calcula la posición objetivo con retardo
