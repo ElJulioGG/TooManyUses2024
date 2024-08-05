@@ -55,3 +55,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Ground
+    uniqueID: 691493235
+    locked: 0
+  - name: afuera
+    uniqueID: 1248572671
+    locked: 0
