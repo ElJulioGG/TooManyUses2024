@@ -5,6 +5,7 @@ using UnityEngine;
 public class activateObject : MonoBehaviour
 {
     public GameObject obj;
+    public GameObject confetti;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +22,7 @@ public class activateObject : MonoBehaviour
         if(collision.gameObject.tag == "Player")
         {
             obj.SetActive(true);
+            confetti.SetActive(true);
             GameManager.instance.playerCanMove = false;
             GameManager.instance.playerCanAtack = false;
             AudioManager.instance.musicSource.Stop();
