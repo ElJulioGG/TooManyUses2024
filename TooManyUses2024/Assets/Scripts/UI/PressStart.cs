@@ -5,10 +5,12 @@ using UnityEngine;
 public class PressStart : MonoBehaviour
 {
     public GameObject pressStartText; // El texto de "Press any key to start"
+    public GameObject deactivator;
 
 
     private void Start()
     {
+        deactivator.SetActive(true);
         GameManager.instance.playerCanMove = false;
         GameManager.instance.playerCanAtack = false;
         // Asegúrate de que los elementos del juego están desactivados al inicio
@@ -30,6 +32,7 @@ public class PressStart : MonoBehaviour
         GameManager.instance.playerCanMove = true;
         GameManager.instance.playerCanAtack = true;
         pressStartText.SetActive(false);
+        deactivator.SetActive(false);
 
 
     }
