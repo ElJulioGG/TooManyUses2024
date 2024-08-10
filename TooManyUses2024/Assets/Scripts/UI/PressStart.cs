@@ -6,7 +6,7 @@ public class PressStart : MonoBehaviour
 {
     public GameObject pressStartText; // El texto de "Press any key to start"
     public GameObject deactivator;
-
+    public GameObject particulas;
 
     private void Start()
     {
@@ -33,6 +33,7 @@ public class PressStart : MonoBehaviour
         GameManager.instance.playerCanAtack = true;
         pressStartText.SetActive(false);
         deactivator.SetActive(false);
+        particulas.SetActive(true);
 
 
     }

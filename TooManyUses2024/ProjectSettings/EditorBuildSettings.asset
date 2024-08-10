@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Testeo.unity
     guid: 847e7ff0148fa1e4eab12e695cc50b0d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainMenu.unity
     guid: 0198398c6f51f10409d0c7cf864c8cf3
   - enabled: 0
