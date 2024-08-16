@@ -29,6 +29,7 @@ public class Movement2 : MonoBehaviour
     [SerializeField] private float jumpBufferTime = 0.2f;
     [SerializeField] private float jumpBufferCounter;
     [SerializeField] private Attack1 attack1;
+    [SerializeField] private Attack2 attack2;
     [SerializeField] public bool isDead;
     [SerializeField] public bool deadSequence = true;
     public float maxHeight { get; private set; } = 0f;
@@ -108,6 +109,7 @@ public class Movement2 : MonoBehaviour
                 if (onGround)
                 {
                     attack1.ammo = 0;
+                    attack2.ammo = 0;
                     handAnimator.SetBool("onGround", true);
                     playerRb.gravityScale = originalGravityScaleChange;
                     if ((jumpBufferCounter > 0) && (timer >= jumpDelay))
@@ -158,9 +160,10 @@ public class Movement2 : MonoBehaviour
             }
             if (GameManager.instance.playerHasBeenHit)
             {
+                GameManager.instance.playerCanMove = false;
                 isHolding = false;
                 handAnimator.SetBool("isHolding", false);
-                onGround = false;
+               
                 handAnimator.SetBool("onGround", false);
 
                 speed = maxSpeed;
@@ -181,6 +184,7 @@ public class Movement2 : MonoBehaviour
         GameManager.instance.playerHasBeenHit = false;
         GameManager.instance.playerCanMove = false;
         GameManager.instance.playerIsInvincible = true;
+        isHolding = false;
         Collider2D collider = playerRb.GetComponent<Collider2D>();
 
         if (collider != null)
@@ -216,6 +220,7 @@ public class Movement2 : MonoBehaviour
             baseForceMagnitude = initialForceMagnitude;
             speed = maxSpeed;
             attack1.waitForAtack1 = true;
+            attack2.waitForAtack1 = true;
             AudioManager.instance.PlayFootSteps("AirTime");
 
             // Reset arrow sprite to normal scale and color
@@ -241,6 +246,7 @@ public class Movement2 : MonoBehaviour
     }
     private void giveAmmo()
     {
+        attack2.ammo = 1;
         attack1.ammo = 1;
     }
 
