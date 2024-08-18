@@ -4,39 +4,28 @@ using UnityEngine;
 
 public class EnemyFliying : MonoBehaviour
 {
-    public float velocidad = 5f; // Velocidad de movimiento del enemigo
-    public GameObject dropPrefab; // Prefab del huevo a disparar
-    public float tiempoEntreDisparos; // Tiempo entre disparos
-    private float tiempoSiguienteDisparo;
-    public float velocidadDisparo; // Velocidad del disparo
-
+    public float velocidad; // Velocidad de movimiento del enemigo
+    public bool moverseALaDerecha = false; // Si es true, se mueve a la derecha; si es false, se mueve a la izquierda
 
     void Start()
     {
-        tiempoSiguienteDisparo = Time.time + tiempoEntreDisparos;
     }
 
     void Update()
     {
         Mover();
-        Disparar();
+        //Disparar();
     }
 
     void Mover()
     {
-        // Movimiento simple hacia la izquierda
-        transform.Translate(Vector2.left * velocidad * Time.deltaTime);
+        // Movimiento hacia la derecha o izquierda según la variable moverseALaDerecha
+        Vector3 direccion = moverseALaDerecha ? Vector3.right : Vector3.left;
+        transform.Translate(direccion * velocidad * Time.deltaTime);
     }
 
     void Disparar()
     {
-        if (Time.time >= tiempoSiguienteDisparo)
-        {
-            GameObject rocket = Instantiate(dropPrefab, transform.position, Quaternion.identity);
-            tiempoSiguienteDisparo = Time.time + tiempoEntreDisparos;
-            Rigidbody2D rb = rocket.GetComponent<Rigidbody2D>();
-            rb.velocity = new Vector2(0, -velocidadDisparo);
-
-        }
+        // Implementación del disparo aquí
     }
 }

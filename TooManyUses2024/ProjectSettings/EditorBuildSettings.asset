@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EasyMode.unity
     guid: efec7966e25f99f449a2d9a83ce699e2
+  - enabled: 1
+    path: Assets/Scenes/Stewei.unity
+    guid: 2f1deb6ee14a19644b62b68892aefa50
   m_configObjects: {}
